@@ -78,6 +78,7 @@ public class BaseTest {
     public void storeAuthenticationDetailsInProperties() {
         Assert.assertEquals(loginResponse.getStatusCode(), 201, "Response code is not matching.");
         JsonPath responseJSONBody = loginResponse.jsonPath();
+        System.out.println("Authentication working............");
 
         PropertiesUtil.storeValuesInPropertiesFile("Login", "LoginData", "auth_token", responseJSONBody.get("auth_token").toString());
         PropertiesUtil.storeValuesInPropertiesFile("Login", "LoginData", "refresh_token", responseJSONBody.get("refresh_token").toString());

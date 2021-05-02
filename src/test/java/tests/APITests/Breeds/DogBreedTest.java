@@ -3,34 +3,52 @@ package tests.APITests.Breeds;
 import common.CommonTestManager;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.http.Header;
+import io.restassured.http.Headers;
 import io.restassured.http.Method;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.json.JSONArray;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import reusablecomponent.VerificationMethods;
 import utils.APIUtils;
 import utils.PropertiesUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DogBreedTest extends CommonTestManager {
 
     RequestSpecification httpRequest;
     Response response;
+    Headers headers;
+
 
 
     DogBreedTest() {
         verificationMethods = new VerificationMethods();
     }
 
+    @BeforeMethod
+    public void loadingTestData() {
+        String sAuthenticationToken = PropertiesUtil.getValuesInPropertiesFile("Login", "LoginData", "auth_token");
+
+        List<Header> headerlist = new ArrayList<>();
+        headerlist.add(new Header("Authorization", "Bearer " + sAuthenticationToken));
+        headerlist.add(new Header("Accept", "application/vnd.whistle.com.v4+json"));
+        headers = new Headers();
+    }
+
+
 
     @Test
     public void testDogsBreedAPI() {
-        String sAuthenticationToken = PropertiesUtil.getValuesInPropertiesFile("Login", "LoginData", "auth_token");
 
         step("Load the request");
-        httpRequest = RestAssured.given().header("Authorization", "Bearer " + sAuthenticationToken).header("Accept", "application/vnd.whistle.com.v4+json").baseUri(sStagingURL).basePath("api/breeds/dogs").contentType(ContentType.JSON);
+        httpRequest = RestAssured.given().headers(headers).baseUri(sStagingURL).basePath("api/breeds/dogs").contentType(ContentType.JSON);
 
         step("Hit the GET request & get the response");
         response = httpRequest.when().request(Method.GET);
@@ -54,7 +72,7 @@ public class DogBreedTest extends CommonTestManager {
         String sAuthenticationToken = PropertiesUtil.getValuesInPropertiesFile("Login", "LoginData", "auth_token");
 
         step("Load the request");
-        httpRequest = RestAssured.given().header("Authorization", "Bearer " + sAuthenticationToken).header("Accept", "application/vnd.whistle.com.v4+json").baseUri(sStagingURL).basePath("api/breeds/cats").contentType(ContentType.JSON);
+        httpRequest = RestAssured.given().given().headers(headers).baseUri(sStagingURL).basePath("api/breeds/cats").contentType(ContentType.JSON);
 
         step("Hit the GET request & get the response");
         response = httpRequest.when().request(Method.GET);
